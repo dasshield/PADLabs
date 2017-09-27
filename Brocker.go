@@ -3,9 +3,13 @@ package main
 import (
 	"net"
 	"fmt"
-	"bufio"
-	"strings"
+	"encoding/json"
 )
+
+type IConnection struct {
+	connType string
+	message string
+}
 
 func main()  {
 	fmt.Println("Launching server...")
@@ -19,14 +23,32 @@ func main()  {
 
 	for {
 		// accept connection on port
-		conn, _ := ln.Accept()
+		conn, err := ln.Accept()
 
-		message, _ := bufio.NewReader(conn).ReadString('\n')
-		fmt.Println("Received message", string(message))
+		if err != nil {
+			continue
+		}
 
-		newmessage := strings.ToUpper(message)
-
-		// send new string to receiver
-		conn.Write([]byte(newmessage))
+		go handleClient(conn)
 	}
+}
+
+func handleClient(conn net.Conn) {
+	defer conn.Close()
+
+	d := json.NewDecoder(conn)
+
+	var mes IConnection
+
+	err := d.Decode(&mes)
+
+	fmt.Println(mes, err)
+
+	/*message, _ := bufio.NewReader(conn).ReadString('\n')
+	fmt.Println("Received message", string(message))
+
+	newmessage := strings.ToUpper(message)*/
+
+	// send new string to receiver
+	//conn.Write([]byte(newmessage))
 }

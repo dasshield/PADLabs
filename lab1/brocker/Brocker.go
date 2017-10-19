@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"bufio"
 	"encoding/gob"
-	"PAD1/vars"
 	"sync"
 	"errors"
+	"pad/PADLabs/lab1/common"
 )
 
 type MQueue struct {
@@ -79,13 +79,13 @@ func handleConnection(conn net.Conn) {
 	}*/
 }
 
-func readMessage(rw bufio.ReadWriter) (message vars.ServerMessage) {
+func readMessage(rw bufio.ReadWriter) (message common.ServerMessage) {
 	dec := gob.NewDecoder(rw)
 	dec.Decode(&message)
 	return message
 }
 
-func handleMessage(message vars.ServerMessage, rw bufio.ReadWriter)  {
+func handleMessage(message common.ServerMessage, rw bufio.ReadWriter)  {
 	switch message.Type {
 	case "client":
 		Queue.Push(message.Message)

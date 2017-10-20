@@ -12,13 +12,13 @@ func main()  {
 	pub := common.NewPub()
 
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Enter Topic: ")
+	fmt.Print("Input Topic: ")
 	topic, err := reader.ReadString('\n')
 	if err != nil {
 		fmt.Println("Cannot read inputed topic")
 	}
 
-	fmt.Print("Enter message: ")
+	fmt.Print("Input message: ")
 	msg, err := reader.ReadString('\n')
 	if err != nil {
 		fmt.Println("Cannot read inputed message")
@@ -26,9 +26,6 @@ func main()  {
 
 
 	for {
-
-
-
 		pub.Publish(topic, msg)
 
 		time.Sleep(time.Second * 10)

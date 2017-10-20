@@ -15,6 +15,7 @@ type broker interface {
 }
 
 func sendMessage(rw *bufio.ReadWriter, message ServerMessage) error {
+	fmt.Println("sendmessage")
 	enc := gob.NewEncoder(rw)
 	err := enc.Encode(&message)
 	if err != nil {
@@ -74,25 +75,23 @@ func broadCaster() {
 }
 
 func broadCastMessage(message ServerMessage) (err error) {
-	log.Println("broadcast message")
-	if message.Id == 0 {
-		return errors.New("Invalid Message, Id is null.")
-	}
 
 	streams, ok := subscriptionMap[message.Topic]
+	fmt.Println(subscriptionMap[message.Topic])
 	log.Println(message, streams, ok)
 	if !ok {
 		return nil
 	}
 
 	for _, subscriber := range subscriptionMap[message.Topic] {
+		fmt.Println("send message")
 		sendMessage(subscriber, message)
 	}
 	return nil
 }
 
 func handleConnection(conn net.Conn) {
-	//defer conn.Close()
+	defer conn.Close()
 
 	rw := bufio.NewReadWriter(bufio.NewReader(conn), bufio.NewWriter(conn))
 
@@ -115,7 +114,6 @@ func handleMessage(message ServerMessage, rw *bufio.ReadWriter) {
 
 		_, ok := pipeline[message.Topic]
 		if !ok {
-			subscriptionMap[message.Topic] = []*bufio.ReadWriter{}
 			pipeline[message.Topic] = NewQueue()
 		}
 		pipeline[message.Topic].Push(message)
@@ -123,6 +121,8 @@ func handleMessage(message ServerMessage, rw *bufio.ReadWriter) {
 	case newSubscriber:
 		subscriptionMap[message.Topic] = append(subscriptionMap[message.Topic], rw)
 		fmt.Println("Subscribed to " + message.Topic)
+		fmt.Println(subscriptionMap[message.Topic])
+		fmt.Println(subscriptionMap)
 	default:
 		sendMessage(rw, ServerMessage{
 			Type:    unknownTypeError,

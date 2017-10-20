@@ -20,7 +20,7 @@ func main()  {
 		fmt.Println("Cannot read inputed topic")
 	}
 
-	sub.Subscribe(topic, func(msg string) {
+	go sub.Subscribe(topic, func(msg string) {
 		fmt.Println("Received message: ", msg)
 	})
 

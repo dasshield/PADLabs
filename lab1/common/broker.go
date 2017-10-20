@@ -74,7 +74,7 @@ func broadCaster() {
 }
 
 func broadCastMessage(message ServerMessage) (err error) {
-
+	log.Println("broadcast message")
 	if message.Id == 0 {
 		return errors.New("Invalid Message, Id is null.")
 	}
@@ -92,7 +92,7 @@ func broadCastMessage(message ServerMessage) (err error) {
 }
 
 func handleConnection(conn net.Conn) {
-	defer conn.Close()
+	//defer conn.Close()
 
 	rw := bufio.NewReadWriter(bufio.NewReader(conn), bufio.NewWriter(conn))
 
@@ -112,18 +112,19 @@ func handleMessage(message ServerMessage, rw *bufio.ReadWriter) {
 	case newPublisher:
 		fmt.Println("Publisher connected")
 	case messagePublished:
+
 		_, ok := pipeline[message.Topic]
 		if !ok {
 			subscriptionMap[message.Topic] = []*bufio.ReadWriter{}
 			pipeline[message.Topic] = NewQueue()
 		}
 		pipeline[message.Topic].Push(message)
+		fmt.Println("Message published", message.Message)
 	case newSubscriber:
 		subscriptionMap[message.Topic] = append(subscriptionMap[message.Topic], rw)
-		fmt.Println("Subsacribed to " + message.Topic)
-
+		fmt.Println("Subscribed to " + message.Topic)
 	default:
-		sendMessage(rw, serverMessage{
+		sendMessage(rw, ServerMessage{
 			Type:    unknownTypeError,
 			Message: unknownTypeError,
 		})

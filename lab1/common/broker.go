@@ -75,16 +75,13 @@ func broadCaster() {
 }
 
 func broadCastMessage(message ServerMessage) (err error) {
+	_, ok := subscriptionMap[message.Topic]
 
-	streams, ok := subscriptionMap[message.Topic]
-	fmt.Println(subscriptionMap[message.Topic])
-	log.Println(message, streams, ok)
 	if !ok {
 		return nil
 	}
 
 	for _, subscriber := range subscriptionMap[message.Topic] {
-		fmt.Println("send message")
 		sendMessage(subscriber, message)
 	}
 	return nil

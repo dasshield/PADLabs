@@ -11,7 +11,18 @@ type Request struct {
 	Msg          string
 }
 
+type Character struct {
+	Nickname string `json:"nickname"`
+	Location string `json:"location"`
+	CoordX int 	`json:"coordX"`
+	CoordY int 	`json:"coordY"`
+}
+
 type NodeInfo struct {
 	Addr 		string
 	NodesCount 	int
+}
+
+type NodeDataRequest struct {
+	Type string
 }

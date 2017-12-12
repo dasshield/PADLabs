@@ -1,8 +1,11 @@
 package common
 
 const (
-	Addr = "224.0.0.1"
+	Addr = "224.0.0.224"
 	TCPAddr = "0.0.0.0"
+	ProxyPort = "8001"
+	ProxyRespPort = "8088"
+	UDPProxyPort = "8089"
 	GET_NODES_INFO = "GET_NODES_INFO"
 )
 

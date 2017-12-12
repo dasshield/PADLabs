@@ -1,12 +1,23 @@
-package lab2
+package main
 
 import (
 	"pad/PADLabs/lab2/node"
 	"pad/PADLabs/lab2/common"
+	"pad/PADLabs/lab2/proxy"
+	"net"
+	"encoding/json"
+	"bufio"
+	"log"
+	"time"
 )
 
 func main()  {
-
+	go proxy.StartMediator()
+	runNodes()
+	time.Sleep(time.Second * 10)
+	dial := tcpDial()
+	marshal, _ := json.Marshal(dial)
+	log.Println("Dial " + string(marshal) + "\n")
 }
 
 func runNodes() {
@@ -70,4 +81,21 @@ func runNodes() {
 			60,
 		},
 	}, nodes, "14405")
+}
+
+func tcpDial() []common.Character {
+	conn, err := net.Dial("tcp", common.TCPAddr + ":" + common.ProxyPort)
+	common.CheckError(err)
+
+	request := common.NodeDataRequest{
+		Type: "get_data",
+	}
+
+	marshal, _ := json.Marshal(request)
+	conn.Write(marshal)
+
+	for {
+		msg, _ := bufio.NewReader(conn).ReadString('\n')
+		log.Println("Client msg" + msg)
+	}
 }
